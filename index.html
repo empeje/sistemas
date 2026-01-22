@@ -38,6 +38,7 @@
             --color-accent: #293c4b;
             --color-danger: #c15050;
             --color-blue: #28527a;
+            --color-amber: #D97706;
             --color-border: #e0e0e0;
             --color-surface: #f8f9fa;
             --color-muted: #555;
@@ -72,10 +73,23 @@
         .border-teal { border-left-color: var(--color-primary); }
         .border-blue { border-left-color: var(--color-blue); }
         .border-red { border-left-color: var(--color-danger); }
+        .border-amber { border-left-color: var(--color-amber); }
 
         .iconic-hover.border-teal:hover { background-color: var(--color-primary); }
         .iconic-hover.border-blue:hover { background-color: var(--color-blue); }
         .iconic-hover.border-red:hover { background-color: var(--color-danger); }
+        .iconic-hover.border-amber:hover { background-color: var(--color-amber); }
+
+        /* Make all child elements turn white on hover */
+        .iconic-hover:hover .hover-text-white {
+            color: #fff !important;
+            background-color: transparent !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+        }
+
+        .iconic-hover:hover .hover-text-white-90 {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
 
         .nav-link {
             font-size: 16px;
