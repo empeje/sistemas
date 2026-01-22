@@ -1,0 +1,7 @@
+{
+  "name": "Sistemas: AI Mock Interview",
+  "description": "A high-fidelity AI-powered platform for practicing system design interviews. Features real-time Excalidraw architecture sync, professional critiques, and interactive voice/text mock sessions.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

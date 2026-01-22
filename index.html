@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistemas - System Design AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://esm.sh/@excalidraw/excalidraw@0.18.0/dist/dev/index.css" />
+    <script>
+      window.process = { 
+        env: { NODE_ENV: 'production' },
+        browser: true,
+        version: '',
+        nextTick: function(fn) { setTimeout(fn, 0); }
+      };
+      Object.freeze(window.process);
+      window.EXCALIDRAW_ASSET_PATH = "https://esm.sh/@excalidraw/excalidraw@0.18.0/dist/prod/";
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap');
+        
+        :root {
+            --color-primary: #00917c;
+            --color-primary-hover: #007d6a;
+            --color-accent: #293c4b;
+            --color-danger: #c15050;
+            --color-blue: #28527a;
+            --color-border: #e0e0e0;
+            --color-surface: #f8f9fa;
+            --color-muted: #555;
+            --font-sans: "Trebuchet MS", "Source Sans Pro", "Lucida Grande", sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: var(--color-accent);
+            margin: 0;
+            font-family: var(--font-sans);
+            font-size: 16px;
+        }
+
+        .iconic-hover {
+            display: inline-block;
+            padding: 10px 16px;
+            text-decoration: none;
+            color: var(--color-accent);
+            border-left: 3px solid;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .iconic-hover:hover {
+            border-left-width: 5px;
+            padding-left: 18px;
+            color: #fff !important;
+        }
+
+        .border-teal { border-left-color: var(--color-primary); }
+        .border-blue { border-left-color: var(--color-blue); }
+        .border-red { border-left-color: var(--color-danger); }
+
+        .iconic-hover.border-teal:hover { background-color: var(--color-primary); }
+        .iconic-hover.border-blue:hover { background-color: var(--color-blue); }
+        .iconic-hover.border-red:hover { background-color: var(--color-danger); }
+
+        .nav-link {
+            font-size: 16px;
+            font-weight: 400;
+        }
+
+        .hero-section {
+            background-color: #040404;
+            height: 500px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .as-seen-at-strip {
+            background-color: var(--color-primary);
+            padding: 18px 0;
+        }
+
+        .footer-bg {
+            background-color: #e8e8e8;
+        }
+
+        input:focus {
+            outline: none;
+            border-left-width: 5px !important;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #ccc; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
+        
+        .excalidraw-container {
+            height: 100% !important;
+            width: 100% !important;
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react/": "https://esm.sh/react@19.0.0/",
+    "react/jsx-runtime": "https://esm.sh/react@19.0.0/jsx-runtime",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/": "https://esm.sh/react-dom@19.0.0/",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "@google/genai": "https://esm.sh/@google/genai@1.38.0",
+    "@excalidraw/excalidraw": "https://esm.sh/@excalidraw/excalidraw@0.18.0?external=react,react-dom",
+    "d3": "https://esm.sh/d3@^7.9.0"
+  }
+}
+</script>
+</head>
+<body>
+    <div id="root"></div>
+</body>
+</html>
