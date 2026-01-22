@@ -5,43 +5,7 @@ import { gemini } from '../services/geminiService';
 import { GoogleGenAI, Modality, LiveServerMessage } from '@google/genai';
 import { createPcmBlob, decodeBase64, decodeAudioData } from '../services/audioUtils';
 import { SYSTEM_INSTRUCTION } from '../constants';
-
-// Highly robust lazy load for Excalidraw. 
-// Uses a direct import and handles the module structure typical of esm.sh builds.
-// Added 'as any' cast to fix IntrinsicAttributes error where 'theme' prop was not recognized
-const Excalidraw = React.lazy(() => 
-  import('@excalidraw/excalidraw').then((module: any) => {
-    // ESM builds on esm.sh often have the component at module.Excalidraw
-    // or potentially module.default.Excalidraw.
-    const component = module.Excalidraw || (module.default && module.default.Excalidraw) || module.default;
-    
-    if (!component || (typeof component !== 'function' && typeof component !== 'object')) {
-      console.error("Excalidraw component invalid or not found:", component);
-      throw new Error("Invalid Excalidraw export");
-    }
-    
-    return { default: component };
-  }).catch(err => {
-    console.error("Excalidraw loading error:", err);
-    // Return a functional component as a fallback
-    const ErrorFallback = () => (
-      <div className="flex-1 flex flex-col items-center justify-center bg-gray-900 text-gray-500 p-10 text-center">
-        <i className="fas fa-exclamation-triangle text-3xl mb-4 text-[#C15050]"></i>
-        <h2 className="text-white font-bold mb-2 uppercase tracking-widest text-xs">Initialization Failed</h2>
-        <p className="text-[10px] leading-relaxed max-w-xs opacity-60">
-          The whiteboard could not be loaded. This is often due to a version mismatch in the React runtime or a network error.
-        </p>
-        <button 
-          onClick={() => window.location.reload()}
-          className="mt-6 px-6 py-2 border border-gray-700 text-[9px] font-bold uppercase tracking-widest hover:border-white hover:text-white transition-colors"
-        >
-          Reload App
-        </button>
-      </div>
-    );
-    return { default: ErrorFallback };
-  })
-) as any;
+import { Excalidraw } from '@excalidraw/excalidraw';
 
 interface Props {
   problem: Problem;
@@ -330,27 +294,13 @@ const InterviewSession: React.FC<Props> = ({ problem, onExit }) => {
         </div>
 
         <div className="w-8/12 bg-black relative flex flex-col">
-          <React.Suspense fallback={
-            <div className="flex-1 flex flex-col items-center justify-center text-gray-500 font-mono text-[10px] uppercase tracking-[0.5em] gap-6">
-              <div className="w-10 h-10 border-2 border-t-[#00917C] border-gray-900 rounded-full animate-spin"></div>
-              Initializing Drawing Engine...
-            </div>
-          }>
-            <div className="flex-1 excalidraw-container">
-              <Excalidraw 
-                theme="dark"
-                excalidrawAPI={(api: any) => setExcalidrawAPI(api)}
-                UIOptions={{
-                  canvasActions: {
-                    toggleTheme: false,
-                    export: true,
-                    loadScene: true,
-                  }
-                }}
-              />
-            </div>
-          </React.Suspense>
-          
+          <div className="flex-1 excalidraw-container">
+            <Excalidraw
+              theme="dark"
+              excalidrawAPI={(api: any) => setExcalidrawAPI(api)}
+            />
+          </div>
+
           <div className="h-20 bg-[#080808] border-t border-gray-900 flex items-center px-10 justify-between">
              <div className="flex gap-10 items-center">
                 <div className="flex flex-col">

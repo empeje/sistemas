@@ -35,6 +35,7 @@ const App: React.FC = () => {
 
       <ConceptStrip />
 
+
       <Footer onHomeClick={handleGoHome} />
     </div>
   );
