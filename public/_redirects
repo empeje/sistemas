@@ -1,0 +1,5 @@
+# Domain redirect from Netlify subdomain to custom domain
+https://sistemasai.netlify.app/*  https://sistemas.mpj.io/:splat  301!
+
+# SPA fallback
+/*    /index.html   200
