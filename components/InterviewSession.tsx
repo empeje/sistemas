@@ -4,7 +4,7 @@ import { Problem, Message, SessionState } from '../types';
 import { gemini } from '../services/geminiService';
 import { GoogleGenAI, Modality, LiveServerMessage } from '@google/genai';
 import { createPcmBlob, decodeBase64, decodeAudioData } from '../services/audioUtils';
-import { SYSTEM_INSTRUCTION } from '../constants';
+import { SYSTEM_INSTRUCTION, AI_CONFIG } from '../constants';
 import { Excalidraw } from '@excalidraw/excalidraw';
 
 interface Props {
@@ -98,8 +98,8 @@ const InterviewSession: React.FC<Props> = ({ problem, onExit }) => {
 
       setIsVoiceMode(true);
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const inputCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
-      const outputCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+      const inputCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: AI_CONFIG.audioConfig.inputSampleRate });
+      const outputCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: AI_CONFIG.audioConfig.outputSampleRate });
       audioContextsRef.current = { input: inputCtx, output: outputCtx };
 
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -107,11 +107,11 @@ const InterviewSession: React.FC<Props> = ({ problem, onExit }) => {
       outputNode.connect(outputCtx.destination);
 
       const sessionPromise = ai.live.connect({
-        model: 'gemini-2.5-flash-native-audio-preview-12-2025',
+        model: AI_CONFIG.voiceModel,
         config: {
           responseModalities: [Modality.AUDIO],
           speechConfig: {
-            voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Zephyr' } },
+            voiceConfig: { prebuiltVoiceConfig: { voiceName: AI_CONFIG.voiceName } },
           },
           systemInstruction: SYSTEM_INSTRUCTION + "\nYou are in a VOICE session. You can SEE the user's Excalidraw canvas in real-time. Comment on what they are drawing. Keep responses concise.",
           inputAudioTranscription: {},

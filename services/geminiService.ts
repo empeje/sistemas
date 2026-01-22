@@ -1,14 +1,14 @@
 
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { Message, ArchitectureGraph } from "../types";
-import { SYSTEM_INSTRUCTION } from "../constants";
+import { SYSTEM_INSTRUCTION, AI_CONFIG } from "../constants";
 
 export class GeminiService {
   // Always create a new instance right before making an API call to ensure fresh configuration
   async sendMessage(history: Message[]): Promise<{ text: string; architecture?: ArchitectureGraph }> {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response: GenerateContentResponse = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
+      model: AI_CONFIG.textModel,
       // Filter history to ensure only user/model turns are passed in contents
       contents: history
         .filter(h => h.role !== 'system')
@@ -18,8 +18,8 @@ export class GeminiService {
         })),
       config: {
         systemInstruction: SYSTEM_INSTRUCTION + "\nYou are reviewing a text-based summary of the user's Excalidraw drawing. Use it to provide high-quality architectural critiques. If they describe a system change, acknowledge what you see on the board.",
-        temperature: 0.7,
-        topP: 0.95,
+        temperature: AI_CONFIG.generationConfig.temperature,
+        topP: AI_CONFIG.generationConfig.topP,
       },
     });
 

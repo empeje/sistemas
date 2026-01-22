@@ -9,6 +9,21 @@ export const HERO_QUOTE = '"Mastering architecture isn\'t just about passing the
 export const COPYRIGHT_TEXT = `© 2017-2026 ${BRAND_NAME} • Part of the ${MENTOR_HANDLE} ecosystem`;
 export const FOOTER_DESCRIPTION = 'Empowering the next generation of engineers to find work that inspires them. Always build systems that are as scrappy and resilient as Rocket Raccoon.';
 
+// AI Model Configuration
+export const AI_CONFIG = {
+  textModel: 'gemini-3-flash-preview',
+  voiceModel: 'gemini-2.5-flash-native-audio-preview-12-2025',
+  voiceName: 'Zephyr',
+  generationConfig: {
+    temperature: 0.7,
+    topP: 0.95,
+  },
+  audioConfig: {
+    inputSampleRate: 16000,
+    outputSampleRate: 24000,
+  },
+} as const;
+
 export const SYSTEM_DESIGN_PROBLEMS: Problem[] = [
   {
     id: 'url-shortener',
