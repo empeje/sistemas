@@ -85,6 +85,17 @@ const InterviewSession: React.FC<Props> = ({ problem, onExit }) => {
 
   const startVoiceMode = async () => {
     try {
+      // Check for browser support
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert('Voice mode requires a secure context (HTTPS) and a browser that supports media devices. Please ensure you are using HTTPS or localhost.');
+        return;
+      }
+
+      if (!window.AudioContext && !(window as any).webkitAudioContext) {
+        alert('Voice mode requires Web Audio API support. Please use a modern browser.');
+        return;
+      }
+
       setIsVoiceMode(true);
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const inputCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
@@ -173,6 +184,23 @@ const InterviewSession: React.FC<Props> = ({ problem, onExit }) => {
       liveSessionRef.current = await sessionPromise;
     } catch (err) {
       console.error("Voice mode error:", err);
+      let errorMessage = "Failed to start voice mode. ";
+
+      if (err instanceof Error) {
+        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+          errorMessage += "Microphone access was denied. Please grant permission to use your microphone.";
+        } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+          errorMessage += "No microphone was found. Please connect a microphone and try again.";
+        } else if (err.name === 'NotSupportedError') {
+          errorMessage += "Your browser does not support audio input.";
+        } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+          errorMessage += "Could not access your microphone. It may be in use by another application.";
+        } else {
+          errorMessage += err.message;
+        }
+      }
+
+      alert(errorMessage);
       stopVoiceMode();
     }
   };
