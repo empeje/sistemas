@@ -10,9 +10,10 @@ import { Excalidraw } from '@excalidraw/excalidraw';
 interface Props {
   problem: Problem;
   onExit: () => void;
+  apiKey: string;
 }
 
-const InterviewSession: React.FC<Props> = ({ problem, onExit }) => {
+const InterviewSession: React.FC<Props> = ({ problem, onExit, apiKey }) => {
   const [session, setSession] = useState<SessionState>({
     problem,
     history: [{ role: 'assistant', content: problem.initialPrompt, timestamp: Date.now() }],
@@ -97,7 +98,7 @@ const InterviewSession: React.FC<Props> = ({ problem, onExit }) => {
       }
 
       setIsVoiceMode(true);
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const ai = new GoogleGenAI({ apiKey });
       const inputCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: AI_CONFIG.audioConfig.inputSampleRate });
       const outputCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: AI_CONFIG.audioConfig.outputSampleRate });
       audioContextsRef.current = { input: inputCtx, output: outputCtx };
@@ -213,7 +214,7 @@ const InterviewSession: React.FC<Props> = ({ problem, onExit }) => {
     setSession(prev => ({ ...prev, history: updatedHistory, isThinking: true }));
     setInputValue('');
     try {
-      const response = await gemini.sendMessage(updatedHistory);
+      const response = await gemini.sendMessage(updatedHistory, apiKey);
       setSession(prev => ({
         ...prev,
         history: [...prev.history, { role: 'assistant' as const, content: response.text, timestamp: Date.now() }],

@@ -5,8 +5,8 @@ import { SYSTEM_INSTRUCTION, AI_CONFIG } from "../constants";
 
 export class GeminiService {
   // Always create a new instance right before making an API call to ensure fresh configuration
-  async sendMessage(history: Message[]): Promise<{ text: string; architecture?: ArchitectureGraph }> {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  async sendMessage(history: Message[], apiKey: string): Promise<{ text: string; architecture?: ArchitectureGraph }> {
+    const ai = new GoogleGenAI({ apiKey });
     const response: GenerateContentResponse = await ai.models.generateContent({
       model: AI_CONFIG.textModel,
       // Filter history to ensure only user/model turns are passed in contents
