@@ -28,7 +28,7 @@ const App: React.FC = () => {
       
       <Hero />
 
-      <main className="w-full max-w-[1140px] px-[15px] mb-20">
+      <main className="w-full max-w-[960px] xl:max-w-[1140px] px-[15px] mb-20">
         <DesignSistemasSection />
         <ProblemGrid onSelectProblem={setSelectedProblem} />
       </main>

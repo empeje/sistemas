@@ -8,7 +8,7 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ onHomeClick }) => {
   return (
-    <nav className="w-full max-w-[1200px] px-[15px] flex justify-end py-6">
+    <nav className="w-full max-w-[960px] xl:max-w-[1140px] px-[15px] flex justify-end py-6">
       <ul className="flex gap-2">
         <li>
           <a 

@@ -1,10 +1,106 @@
-# AGENTS — The Enterprise
+# Sistemas: architecture summary & quick audit
 
-- Purpose: models a lifestyle business built around personal branding, longform writing, courses, and mentoring — inspired by Cal Newport and Scott Young.
-- Goal: operate two complementary public-facing personas that leverage software engineering, CTO experience, mentorship, and legal scholarship.
-- Code organization:
-  - `website/` — a git submodule that contains and handles the public website (source, build configuration, and deployment). 
-  - `Sistemas/` — AI-powered flagship tool for technical mentorship and interactive system design practice.
+## Summary
+
+**Sistemas** is the flagship AI-powered tool for technical mentorship and interactive system design practice. Built with React 19, Vite, Tailwind CSS, and Google's Gemini AI, it provides a high-fidelity simulator that bridges the gap between theory and FAANG-level system design interviews.
+
+### Tech Stack
+- **Frontend:** React 19, TypeScript, Tailwind CSS (CDN)
+- **AI Engine:** Google Gemini 2.0 (multimodal with vision)
+- **Canvas:** Excalidraw (visual architecture diagrams)
+- **Build:** Vite with ESM imports
+- **Styling:** Tailwind + CSS custom properties
+
+### Architecture
+- **App.tsx:** Main application router, switches between home and interview modes
+- **Components:** Modular React components (Navbar, Hero, Footer, InterviewSession, etc.)
+- **Services:** Gemini API integration (`geminiService.ts`), audio utilities
+- **Constants:** Brand text, URLs, problem definitions
+- **Types:** TypeScript definitions for Problem, Message, etc.
+
+---
+
+## The Enterprise Context
+
+**Sistemas** is part of "The Enterprise" - a lifestyle business model built around personal branding, longform writing, courses, and mentoring.
+
+- **Purpose:** Models a lifestyle business inspired by Cal Newport and Scott Young
+- **Goal:** Operate two complementary public-facing personas leveraging software engineering, CTO experience, mentorship, and legal scholarship
+- **Code organization:**
+  - `website/` — Main personal website (mpj.io) with Bootstrap 4
+  - `sistemas/` — AI-powered flagship tool (this project)
+
+---
+
+## Documentation
+
+All technical documentation is organized in the `docs/` directory following the same structure as the main website. See **[`docs/README.md`](./docs/README.md)** for the complete documentation index.
+
+### 📚 Core Documentation
+- **[`docs/LAYOUT_GUIDE.md`](./docs/LAYOUT_GUIDE.md)** - Complete layout system, responsive containers, Bootstrap 4 alignment
+- **[`REFACTORING_LOG.md`](./REFACTORING_LOG.md)** - Refactoring history, lessons learned, testing protocols
+
+### 🎯 Agent Guidelines
+
+**When you need to remember something for next time:**
+1. **Update AGENTS.md** - Add architectural notes, patterns, or warnings here
+2. **Create docs in `docs/`** - Write detailed guides for complex topics
+3. **Link from AGENTS.md** - Reference your docs with relative links
+
+**For any refactoring work:**
+1. **Add session to `REFACTORING_LOG.md`** - Document what changed, why, and lessons learned
+2. **Update relevant docs** - Keep `docs/` guides current with code changes
+3. **Test thoroughly** - Follow testing protocols in REFACTORING_LOG.md
+
+**Documentation Best Practices:**
+- Use descriptive filenames (e.g., `LAYOUT_GUIDE.md`, `ARCHITECTURE_GUIDE.md`)
+- Include code examples with syntax highlighting
+- Add checklists for verification
+- Link between related documents
+- Keep AGENTS.md as the entry point/index
+
+---
+
+## Layout & Alignment System
+
+The Sistemas app follows **Bootstrap 4 container standards** to maintain visual consistency with the main website. See **[`docs/LAYOUT_GUIDE.md`](./docs/LAYOUT_GUIDE.md)** for complete details.
+
+### Key Principles:
+1. **Responsive max-widths** - 960px at ≥992px, 1140px at ≥1200px
+2. **15px horizontal padding** - Consistent with Bootstrap container (`px-[15px]`)
+3. **Full-width sections** - Backgrounds extend full width, content is constrained
+4. **Perfect alignment** - All content left edges align at every breakpoint
+
+### Container Pattern:
+```tsx
+{/* Full-width outer */}
+<section className="w-full bg-teal">
+  {/* Constrained inner (matches Bootstrap) */}
+  <div className="max-w-[960px] xl:max-w-[1140px] mx-auto px-[15px]">
+    {/* Content */}
+  </div>
+</section>
+```
+
+### Tailwind Configuration:
+Custom breakpoints configured in `index.html` to match Bootstrap 4:
+```javascript
+tailwind.config = {
+  theme: {
+    extend: {
+      screens: {
+        'lg': '992px',  // Bootstrap lg breakpoint
+        'xl': '1200px', // Bootstrap xl breakpoint
+      }
+    }
+  }
+}
+```
+
+### Why Bootstrap Standards?
+The main website uses Bootstrap 4, and Sistemas must match the same container widths for visual consistency. At 992px-1199px viewport: **960px container**. At 1200px+ viewport: **1140px container**.
+
+---
 
 ## Inspiration
 - Cal Newport: deep work, books, newsletter, focused productization.

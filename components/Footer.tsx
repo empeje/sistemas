@@ -9,7 +9,7 @@ interface FooterProps {
 const Footer: React.FC<FooterProps> = ({ onHomeClick }) => {
   return (
     <footer className="footer-bg w-full py-16">
-      <div className="max-w-[1140px] mx-auto px-[15px] flex flex-col md:flex-row justify-between gap-12">
+      <div className="max-w-[960px] xl:max-w-[1140px] mx-auto px-[15px] flex flex-col md:flex-row justify-between gap-12">
         <div className="flex-1">
           <p className="font-bold text-gray-700 mb-4 uppercase tracking-tighter">{COPYRIGHT_TEXT}</p>
           <p className="text-sm text-gray-500 leading-relaxed max-w-md italic">
