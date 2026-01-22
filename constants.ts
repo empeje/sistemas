@@ -9,6 +9,20 @@ export const HERO_QUOTE = '"Mastering architecture isn\'t just about passing the
 export const COPYRIGHT_TEXT = `© 2017-2026 ${BRAND_NAME} • Part of the ${MENTOR_HANDLE} ecosystem`;
 export const FOOTER_DESCRIPTION = 'Empowering the next generation of engineers to find work that inspires them. Always build systems that are as scrappy and resilient as Rocket Raccoon.';
 
+// Footer Links
+export const FOOTER_LINKS = {
+  quickLinks: [
+    { label: 'Appearances', url: 'https://mpj.io/appearances' },
+    { label: 'Investments', url: 'https://mpj.io/entrepreneurship' },
+    { label: 'Offers', url: 'https://mpj.io/offers' },
+  ],
+  community: [
+    { label: 'Private Community', url: 'https://discord.com/invite/TEAJHURh2e?utm_source=sistemas.mpj.io' },
+    { label: 'Lu.ma', url: 'https://lu.ma/u/mpj?utm_source=sistemas.mpj.io' },
+    { label: 'Meetup', url: 'https://www.meetup.com/members/279285007/?utm_source=sistemas.mpj.io' },
+  ],
+} as const;
+
 // AI Model Configuration
 export const AI_CONFIG = {
   textModel: 'gemini-3-flash-preview',
