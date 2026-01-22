@@ -42,8 +42,40 @@ All technical documentation is organized in the `docs/` directory following the 
 
 ### 🎯 Agent Guidelines
 
+**CRITICAL RULE: After any working solution is achieved, you MUST document learnings.**
+
+### When You Solve a Problem:
+1. **Immediately capture the learning** — Don't wait, document while the solution is fresh
+2. **Choose the right location:**
+   - **AGENTS.md** — Add architectural patterns, warnings, or quick reference notes (see "Learning:" sections below)
+   - **docs/** — Create detailed guides for complex topics (e.g., `ARCHITECTURE_GUIDE.md`, `API_GUIDE.md`)
+   - **REFACTORING_LOG.md** — Document refactoring sessions with what changed, why, and lessons learned
+3. **Link documents together** — Create a documentation web with relative links
+4. **Update indexes** — Ensure AGENTS.md references new documentation
+
+### What to Document:
+- **Root cause** — What was actually wrong?
+- **Solution approach** — What fixed it and why?
+- **Anti-patterns** — What didn't work and should be avoided?
+- **Best practices** — What patterns emerged that should be reused?
+- **Gotchas** — What edge cases or pitfalls exist?
+- **Testing protocols** — How to verify the solution works?
+
+### Documentation Quality Standards:
+- Use descriptive filenames (not `notes.md` or `temp.md`)
+- Include code examples with syntax highlighting
+- Add verification checklists
+- Provide context for future developers
+- Keep it concise but complete
+
+**Remember: Undocumented knowledge is lost knowledge. Document every win.**
+
+---
+
+### Quick Documentation Workflows:
+
 **When you need to remember something for next time:**
-1. **Update AGENTS.md** - Add architectural notes, patterns, or warnings here
+1. **Update AGENTS.md** - Add architectural notes, patterns, or warnings here (use "Learning:" prefix for major insights)
 2. **Create docs in `docs/`** - Write detailed guides for complex topics
 3. **Link from AGENTS.md** - Reference your docs with relative links
 
@@ -168,3 +200,149 @@ When building with modern ESM modules (esm.sh) and complex libraries like Excali
 - **Resilient Environment Shimming**: Global objects like `window.process` should be shimmed early and made immutable (`Object.freeze`) if necessary to prevent downstream libraries from overwriting them with invalid primitives (causing "Cannot create property on boolean" errors).
 - **Lazy Load Robustness**: Dynamic imports in a browser context must account for varied export patterns (`module.Excalidraw` vs `module.default`). A "Fail-Safe" component return ensures the app remains usable even if the primary engine encounters a stall.
 - **JSX Runtime Criticality**: Modern React libraries often depend on a global or specifically mapped `react/jsx-runtime`. Excluding this from the `importmap` while using React 18/19 can result in Error #31 as the library attempts to render objects that the host React instance does not recognize as valid elements. Mapping this explicitly to version 19.0.0 resolves the registry mismatch.
+
+## Learning: Browser API Validation for Voice Features
+When implementing voice-based interactions using `getUserMedia` and Web Audio API:
+- **Never Assume Browser Support**: Always validate that `navigator.mediaDevices` and `navigator.mediaDevices.getUserMedia` exist before attempting to access them. These APIs are undefined in non-secure contexts (HTTP) or unsupported browsers, causing `TypeError: Cannot read properties of undefined`.
+- **HTTPS or Localhost Requirement**: The Media Streams API (`getUserMedia`) requires a secure context. It will be undefined when served over HTTP (except on localhost). Provide clear error messages directing users to use HTTPS or localhost.
+- **Web Audio API Fallbacks**: Check for both `window.AudioContext` and `(window as any).webkitAudioContext` to support older Safari/WebKit browsers.
+- **Granular Error Messaging**: Different `getUserMedia` errors have specific meanings:
+  - `NotAllowedError` / `PermissionDeniedError`: User denied microphone permission
+  - `NotFoundError` / `DevicesNotFoundError`: No microphone device available
+  - `NotSupportedError`: Browser doesn't support audio input
+  - `NotReadableError` / `TrackStartError`: Microphone in use by another application
+- **Early Returns**: If browser capabilities are missing, return early with user-friendly alerts before attempting to initialize audio contexts or create sessions. This prevents cascading errors and provides immediate feedback.
+- **Defensive Initialization**: Validate all prerequisites before setting state flags like `isVoiceMode` to prevent UI inconsistencies when initialization fails.
+
+## Learning: Excalidraw Integration & Module Resolution (January 2026)
+When integrating Excalidraw with Vite and React 19, several critical lessons emerged about proper module handling:
+
+### The Core Problem: App Wouldn't Render
+**Issue**: The app showed a blank screen with no rendering at all.
+**Root Cause**: Missing `<script type="module" src="/index.tsx"></script>` in `index.html`.
+**Solution**: Vite requires an explicit script tag pointing to the TypeScript entry point to bootstrap the React application.
+
+### The Excalidraw Rendering Problem
+**Issue**: `TypeError: Cannot create property 'saveFileToDisk' on boolean 'true'` when rendering Excalidraw in InterviewSession component.
+**Root Cause**: Incorrect `UIOptions` prop structure - passing boolean values directly instead of proper configuration objects.
+
+### Critical Learnings
+
+#### 1. Don't Overthink Module Resolution
+**Anti-Pattern (What Failed):**
+```typescript
+const Excalidraw = React.lazy(() => 
+  import('@excalidraw/excalidraw').then((module: any) => {
+    const component = module.Excalidraw || 
+                     (module.default && module.default.Excalidraw) || 
+                     module.default;
+    return { default: component };
+  })
+) as any;
+```
+
+**Correct Pattern:**
+```typescript
+import { Excalidraw } from '@excalidraw/excalidraw';
+```
+
+**Why It Matters:**
+- Vite already handles ESM module resolution correctly
+- React.lazy() adds unnecessary complexity for libraries with proper ESM exports
+- Type casting `as any` suppresses TypeScript errors that reveal real problems
+- Manual module resolution logic often guesses wrong about export structure
+
+#### 2. Match Working Patterns First
+**The Debugging Strategy:**
+- When one component works (App.tsx) and another fails (InterviewSession.tsx), **copy the working pattern exactly**
+- Don't add complexity (lazy loading, Suspense, manual module resolution) without proven need
+- Start minimal, then add features incrementally
+
+#### 3. Vite's Module System Is Smart
+**What Vite Handles Automatically:**
+- Code splitting and lazy loading
+- ESM import resolution from node_modules
+- Hot module replacement
+- Import map integration (when configured in index.html)
+
+**Don't Fight It:**
+- Direct imports work better than React.lazy() for most libraries
+- Let Vite manage the bundling strategy
+- Import maps in index.html can conflict with React.lazy() - be consistent
+
+#### 4. Props Matter: Start Minimal
+**Working Progression for Excalidraw:**
+1. **First**: Get it rendering with no props: `<Excalidraw />`
+2. **Then**: Add essential props one by one:
+   ```typescript
+   <Excalidraw 
+     theme="dark"
+     excalidrawAPI={(api) => setExcalidrawAPI(api)}
+   />
+   ```
+3. **Finally**: Add advanced configuration only when needed and properly typed
+
+**Props to Avoid Initially:**
+- Complex `UIOptions` configurations with unclear structure
+- Any prop that causes cryptic errors like `Cannot create property 'X' on boolean`
+- Props marked with `as any` type casting
+
+#### 5. The Index.html Entry Point
+**Critical for Vite:**
+```html
+<body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+```
+
+**Why This Matters:**
+- Vite doesn't automatically inject the entry script
+- Without this, the app won't bootstrap at all
+- The `type="module"` attribute enables ESM imports
+- Vite transforms this during build, but needs the reference
+
+#### 6. React.Suspense Is Optional
+**When React.lazy() was removed, React.Suspense became unnecessary:**
+- Suspense is only needed for lazy-loaded components
+- Direct imports render synchronously - no suspense boundary needed
+- Suspense fallbacks can mask actual errors in component initialization
+
+### Quick Reference: Excalidraw Integration
+
+**✅ DO:**
+```typescript
+import { Excalidraw } from '@excalidraw/excalidraw';
+
+<Excalidraw 
+  theme="dark"
+  excalidrawAPI={(api) => setExcalidrawAPI(api)}
+/>
+```
+
+**❌ DON'T:**
+```typescript
+// Don't use React.lazy() without need
+const Excalidraw = React.lazy(() => import(...));
+
+// Don't manually resolve module exports
+const component = module.Excalidraw || module.default;
+
+// Don't suppress types with 'as any'
+const Excalidraw = React.lazy(...) as any;
+
+// Don't pass incorrectly structured props
+UIOptions={{ canvasActions: { saveFileToDisk: true } }} // ❌ Structure may be wrong
+```
+
+### Debugging Strategy for "Nothing Renders"
+1. **Check index.html** - Is the entry script tag present?
+2. **Check browser console** - Are there import/module errors?
+3. **Find working example** - Does the same component work elsewhere?
+4. **Copy working pattern** - Use identical import and usage
+5. **Add complexity gradually** - Start with no props, add one at a time
+6. **Check TypeScript errors** - Don't suppress with `as any`, fix the root cause
+
+### Key Takeaway
+**Simplicity wins.** Modern build tools like Vite and libraries like Excalidraw are designed to work with straightforward patterns. When something works in one place, replicate that pattern exactly before attempting optimizations or alternative approaches. The "clever" solution with lazy loading and manual module resolution was the problem, not the solution.
+
